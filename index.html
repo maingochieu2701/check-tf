@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Check trùng comment_id - Traffic90</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
+        background: #f2f2f2;
+      }
+      textarea {
+        width: 100%;
+        height: 200px;
+        padding: 10px;
+        font-size: 14px;
+      }
+      button {
+        padding: 12px 20px;
+        margin-top: 10px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      #result {
+        margin-top: 20px;
+        background: #fff;
+        padding: 15px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Check Trùng Comment_ID (Chuẩn Traffic90)</h2>
+
+    <textarea id="input" placeholder="Dán danh sách link vào đây..."></textarea>
+    <button onclick="checkDup()">Kiểm tra trùng</button>
+
+    <div id="result"></div>
+
+    <script>
+      function checkDup() {
+        const text = document.getElementById("input").value.trim();
+        const resultBox = document.getElementById("result");
+        if (!text) {
+          resultBox.textContent = "⚠ Vui lòng dán danh sách link!";
+          return;
+        }
+
+        // Lấy toàn bộ comment_id trong văn bản
+        const regex = /comment_id=([0-9]{5,20})/g;
+        let match;
+        const ids = [];
+
+        while ((match = regex.exec(text)) !== null) {
+          ids.push(match[1]);
+        }
+
+        if (ids.length === 0) {
+          resultBox.textContent = "❌ Không tìm thấy comment_id nào!";
+          return;
+        }
+
+        // Đếm số lần xuất hiện để tìm trùng
+        const count = {};
+        ids.forEach((id) => {
+          count[id] = (count[id] || 0) + 1;
+        });
+
+        const duplicates = Object.keys(count).filter((id) => count[id] > 1);
+
+        if (duplicates.length === 0) {
+          resultBox.textContent = "✅ KHÔNG TRÙNG – An toàn cho Traffic90.";
+        } else {
+          let out = "❌ PHÁT HIỆN TRÙNG (" + duplicates.length + " ID)\n\n";
+          duplicates.forEach((id) => {
+            out += `ID: ${id} → xuất hiện ${count[id]} lần\n`;
+          });
+          resultBox.textContent = out;
+        }
+      }
+    </script>
+  </body>
+</html>
